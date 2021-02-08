@@ -1,0 +1,19 @@
+---
+
+# tasks file for webserver
+
+- name: Install Apache2 Packages 
+
+  apt: name=apache2 state=absent
+
+
+
+- name: Start Apache2 Service
+
+  service: name=apache2 state=stopped
+
+ 
+
+#- name: Deploy Cutsom Web Page
+
+#  copy: src=files/index.html dest=/var/www/html/

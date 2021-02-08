@@ -1,0 +1,15 @@
+---
+
+
+
+- hosts: all
+
+  name: "Petclinic Deployment"
+
+  become: yes
+
+  roles:
+
+  - firewall
+
+  - petclinic
