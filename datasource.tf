@@ -14,7 +14,7 @@ data "aws_ami" "myami" {
 
     name = "name"
 
-    values = ["amzn2-ami-hvm*"]
+    values = ["*ubuntu-xenial-16.04-amd64-server*"]
 
   }
 

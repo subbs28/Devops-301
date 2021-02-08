@@ -30,7 +30,7 @@ resource "aws_instance" "backend" {
 
     type = "ssh"
 
-    user = "ec2-user"
+    user = "ubuntu"
 
     private_key = file(var.pvt_key_name)
 
