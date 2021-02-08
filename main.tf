@@ -1,14 +1,14 @@
 resource "aws_instance" "backend" {
 
-  ami = data.aws_ami.myami.id
+  ami               = "ami-0ebc8f6f580a04647"
 
-  instance_type = "t2.micro"
+  instance_type     = "t2.micro"
 
-  availability_zone = data.aws_availability_zones.zone_east.names[count.index]
+#  availability_zone = data.aws_availability_zones.zone_east.names[count.index]
 
-  count = 1
+#  count             = 1
 
-  key_name = var.key_name
+  key_name          = var.key_name
 
   vpc_security_group_ids = [var.sg_id]
 
@@ -20,13 +20,13 @@ resource "aws_instance" "backend" {
 
   tags = {
 
-    Name = "Dev-test-App"
+    Name = "Dev-App"
 
   }
 
 
 
-  connection {
+  connection { 
 
     type = "ssh"
 
@@ -34,38 +34,56 @@ resource "aws_instance" "backend" {
 
     private_key = file(var.pvt_key_name)
 
-    host = self.public_ip
+    host  = self.public_ip 
 
   }
 
 
 
-
-
-  provisioner "file" {
-
-    source = "./frontend"
-
-    destination = "~/"
-
-
-
-  }
-
-
+  
 
   provisioner "remote-exec" {
 
     inline = [
 
-      "sudo chmod +x ~/frontend/run_frontend.sh",
+      "sudo sleep 30",
 
-      "sudo sh ~/frontend/run_frontend.sh"
+      "sudo apt-get update -y",
+
+      "sudo apt-get install python sshpass -y"
 
     ]
 
 
 
   }
+
+}
+
+
+
+
+
+resource "null_resource" "ansible-main" { 
+
+  provisioner "local-exec" {
+
+    command = <<EOT
+
+       > jenkins-ci.ini;
+
+       echo "[jenkins-ci]"|tee -a jenkins-ci.ini;
+
+       export ANSIBLE_HOST_KEY_CHECKING=False;
+
+       echo "${aws_instance.backend.public_ip}"|tee -a jenkins-ci.ini;
+
+       ansible-playbook --key-file=${var.pvt_key_name} -i jenkins-ci.ini -u ubuntu ./ansible-code/petclinic.yaml -v 
+
+     EOT
+
+  }
+
+  depends_on = [aws_instance.backend]
 
 }
