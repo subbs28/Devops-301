@@ -4,9 +4,9 @@ resource "aws_instance" "backend" {
 
   instance_type     = "t2.micro"
 
-   availability_zone = data.aws_availability_zones.zone_east.names[count.index]
+  availability_zone = data.aws_availability_zones.zone_east.names[count.index]
 
-   count             = 2
+  count             = 2
 
   key_name          = var.key_name
 
@@ -76,8 +76,7 @@ resource "null_resource" "ansible-main" {
 
        export ANSIBLE_HOST_KEY_CHECKING=False;
 
-       echo "${aws_instance.backend.[0].public_ip}"|tee -a jenkins-ci.ini;
-       echo "${aws_instance.backend.[1].public_ip}"|tee -a jenkins-ci.ini;
+       echo "${aws_instance.backend.*.public_ip}"|tee -a jenkins-ci.ini;
 
        ansible-playbook --key-file=${var.pvt_key_name} -i jenkins-ci.ini -u ubuntu ./ansible-code/petclinic.yaml -v 
 
