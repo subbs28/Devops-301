@@ -76,7 +76,7 @@ resource "null_resource" "ansible-main" {
 
        export ANSIBLE_HOST_KEY_CHECKING=False;
 
-       echo "${aws_instance.backend.*.public_ip}"|tee -a jenkins-ci.ini;
+       echo "${aws_instance.backend.[*].public_ip}"|tee -a jenkins-ci.ini;
 
        ansible-playbook --key-file=${var.pvt_key_name} -i jenkins-ci.ini -u ubuntu ./ansible-code/petclinic.yaml -v 
 
